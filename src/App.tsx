@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Help from "./pages/Help";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import APKBuild from "./pages/APKBuild";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/help" element={<Help />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/apk-build" element={<APKBuild />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
