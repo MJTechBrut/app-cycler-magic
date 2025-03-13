@@ -13,6 +13,10 @@ const config: CapacitorConfig = {
     buildOptions: {
       keystorePath: 'appcycler.keystore',
       keystoreAlias: 'appcycler',
+    },
+    // Adding orientation preference
+    preferences: {
+      orientation: 'landscape'
     }
   }
 };
