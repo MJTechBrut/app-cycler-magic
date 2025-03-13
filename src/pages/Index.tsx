@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -10,6 +9,7 @@ import AppCycleList from '@/components/AppCycleList';
 import AppSelector from '@/components/AppSelector';
 import StatusIndicator from '@/components/StatusIndicator';
 import Header from '@/components/Header';
+import CanBusSimulator from '@/components/CanBusSimulator';
 import { useAppCycler } from '@/hooks/use-app-cycler';
 
 const Index = () => {
@@ -44,6 +44,10 @@ const Index = () => {
       description: `${app.name} added to cycle list`,
     });
   };
+  
+  // Determine if we're in development mode
+  const isDevelopment = window.location.hostname === 'localhost' || 
+                        window.location.hostname.includes('lovableproject.com');
   
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -108,6 +112,8 @@ const Index = () => {
           selectedApps={config.apps}
         />
       </main>
+      
+      {isDevelopment && <CanBusSimulator />}
       
       <motion.footer
         initial={{ opacity: 0, y: 20 }}
