@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -101,9 +102,19 @@ const APKBuild = () => {
                     <p>If you haven't already, install Android Studio from the <a href="https://developer.android.com/studio" className="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">official website</a>.</p>
                   </li>
                   <li>
-                    <p className="font-medium">Install Android SDK</p>
+                    <p className="font-medium">Install Android SDK Components</p>
                     <p>Open Android Studio → Settings/Preferences → Languages & Frameworks → Android SDK</p>
-                    <p>Install Android SDK Platform 33 (or latest) and Android SDK Build-Tools.</p>
+                    <p>Install the following components:</p>
+                    <ul className="list-disc pl-5 space-y-1">
+                      <li>Android SDK Platform 33 (or latest)</li>
+                      <li>Android SDK Build-Tools (latest version)</li>
+                      <li>SDK Platform Extensions (e.g., 33-ext4, etc.)</li>
+                      <li>Android SDK Command-line Tools</li>
+                      <li>Android SDK Platform-Tools</li>
+                      <li>Google Play services</li>
+                      <li>Android Emulator (if testing on emulator)</li>
+                    </ul>
+                    <p className="mt-2">Click on "SDK Tools" tab to see and install most of these components.</p>
                   </li>
                   <li>
                     <p className="font-medium">Configure Environment Variables</p>
@@ -171,6 +182,54 @@ const APKBuild = () => {
                   # Move it to the right location<br/>
                   mv debug.keystore android/app/
                 </div>
+              </div>
+              
+              <div className="space-y-2">
+                <h3 className="font-semibold text-lg">Error: Gradle build failing with Execution failed for task</h3>
+                <p>Several additional troubleshooting steps to try:</p>
+                <ol className="list-decimal pl-5 space-y-2">
+                  <li>
+                    <p className="font-medium">Check Java Version</p>
+                    <p>Gradle may have issues with certain Java versions. Ensure you have a compatible JDK installed (JDK 17 is recommended for recent Android builds).</p>
+                    <div className="bg-gray-100 p-3 rounded-md font-mono text-sm">
+                      # Check Java version<br/>
+                      java -version
+                    </div>
+                    <p>If needed, download and install a compatible JDK from <a href="https://adoptium.net/" className="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">Adoptium</a>.</p>
+                  </li>
+                  <li>
+                    <p className="font-medium">Clear Gradle Cache</p>
+                    <div className="bg-gray-100 p-3 rounded-md font-mono text-sm">
+                      # For macOS/Linux<br/>
+                      rm -rf $HOME/.gradle/caches/<br/><br/>
+                      
+                      # For Windows<br/>
+                      rmdir /s /q %USERPROFILE%\.gradle\caches\
+                    </div>
+                  </li>
+                  <li>
+                    <p className="font-medium">Update Gradle Version</p>
+                    <p>If needed, update the gradle version in android/gradle/wrapper/gradle-wrapper.properties:</p>
+                    <div className="bg-gray-100 p-3 rounded-md font-mono text-sm">
+                      distributionUrl=https\://services.gradle.org/distributions/gradle-8.0-all.zip
+                    </div>
+                    <p>Replace 8.0 with the latest stable version.</p>
+                  </li>
+                  <li>
+                    <p className="font-medium">Check for Specific SDK Extensions</p>
+                    <p>Some builds require specific SDK Extensions. Open Android Studio → SDK Manager → SDK Platforms → Show Package Details → Check for platform extensions like 33-ext4, 34-ext8, etc.</p>
+                    <p>Install any extensions for the SDK versions you're using (33, 34, 35).</p>
+                  </li>
+                  <li>
+                    <p className="font-medium">Modify gradle.properties</p>
+                    <p>Add the following lines to android/gradle.properties to allocate more memory for the build:</p>
+                    <div className="bg-gray-100 p-3 rounded-md font-mono text-sm">
+                      org.gradle.jvmargs=-Xmx4096m -XX:MaxPermSize=1024m -XX:+HeapDumpOnOutOfMemoryError
+                      org.gradle.parallel=true
+                      org.gradle.daemon=true
+                    </div>
+                  </li>
+                </ol>
               </div>
             </CardContent>
           </Card>
