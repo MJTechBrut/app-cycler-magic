@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -197,6 +196,28 @@ const APKBuild = () => {
                     </div>
                     <p>If needed, download and install a compatible JDK from <a href="https://adoptium.net/" className="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">Adoptium</a>.</p>
                   </li>
+                  
+                  <li>
+                    <p className="font-medium">Error: invalid source release X</p>
+                    <p>If you see an error like <code>error: invalid source release: 21</code>, it means the Java version specified in your Gradle configuration is higher than your installed Java version.</p>
+                    <p>Modify the following files:</p>
+                    <div className="bg-gray-100 p-3 rounded-md font-mono text-sm">
+                      # Edit android/capacitor-android/build.gradle<br/>
+                      # Look for lines like:<br/>
+                      compileOptions &#123;<br/>
+                      &nbsp;&nbsp;sourceCompatibility JavaVersion.VERSION_21<br/>
+                      &nbsp;&nbsp;targetCompatibility JavaVersion.VERSION_21<br/>
+                      &#125;<br/><br/>
+                      
+                      # Change to match your installed Java version (e.g., 17):<br/>
+                      compileOptions &#123;<br/>
+                      &nbsp;&nbsp;sourceCompatibility JavaVersion.VERSION_17<br/>
+                      &nbsp;&nbsp;targetCompatibility JavaVersion.VERSION_17<br/>
+                      &#125;
+                    </div>
+                    <p>Also check <code>android/build.gradle</code> for similar settings that might need updating.</p>
+                  </li>
+                  
                   <li>
                     <p className="font-medium">Clear Gradle Cache</p>
                     <div className="bg-gray-100 p-3 rounded-md font-mono text-sm">
@@ -207,6 +228,7 @@ const APKBuild = () => {
                       rmdir /s /q %USERPROFILE%\.gradle\caches\
                     </div>
                   </li>
+                  
                   <li>
                     <p className="font-medium">Update Gradle Version</p>
                     <p>If needed, update the gradle version in android/gradle/wrapper/gradle-wrapper.properties:</p>
@@ -215,11 +237,13 @@ const APKBuild = () => {
                     </div>
                     <p>Replace 8.0 with the latest stable version.</p>
                   </li>
+                  
                   <li>
                     <p className="font-medium">Check for Specific SDK Extensions</p>
                     <p>Some builds require specific SDK Extensions. Open Android Studio → SDK Manager → SDK Platforms → Show Package Details → Check for platform extensions like 33-ext4, 34-ext8, etc.</p>
                     <p>Install any extensions for the SDK versions you're using (33, 34, 35).</p>
                   </li>
+                  
                   <li>
                     <p className="font-medium">Modify gradle.properties</p>
                     <p>Add the following lines to android/gradle.properties to allocate more memory for the build:</p>
