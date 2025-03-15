@@ -103,7 +103,7 @@ const APKBuild = () => {
                   </li>
                   <li>
                     <p className="font-medium">Install Android SDK</p>
-                    <p>Open Android Studio → Settings/Preferences → Appearance & Behavior → System Settings → Android SDK</p>
+                    <p>Open Android Studio → Settings/Preferences → Languages & Frameworks → Android SDK</p>
                     <p>Install Android SDK Platform 33 (or latest) and Android SDK Build-Tools.</p>
                   </li>
                   <li>
@@ -114,10 +114,16 @@ const APKBuild = () => {
                       $env:PATH += ";$env:ANDROID_SDK_ROOT\tools;$env:ANDROID_SDK_ROOT\platform-tools"<br/><br/>
                       
                       # For macOS/Linux (in .bash_profile or .zshrc)<br/>
-                      export ANDROID_SDK_ROOT=$HOME/Library/Android/sdk<br/>
+                      # Option 1: Using $HOME variable (automatically expands to your home directory)<br/>
+                      export ANDROID_SDK_ROOT=$HOME/Library/Android/sdk<br/><br/>
+                      
+                      # Option 2: Using explicit path (replace YOUR_USERNAME with your actual username)<br/>
+                      export ANDROID_SDK_ROOT=/Users/YOUR_USERNAME/Library/Android/sdk<br/><br/>
+                      
+                      # Then add to PATH (use with either option above)<br/>
                       export PATH=$PATH:$ANDROID_SDK_ROOT/tools:$ANDROID_SDK_ROOT/platform-tools
                     </div>
-                    <p>Replace paths with your actual SDK location.</p>
+                    <p>Replace paths with your actual SDK location as shown in Android Studio's SDK settings.</p>
                   </li>
                   <li>
                     <p className="font-medium">Accept SDK Licenses</p>
