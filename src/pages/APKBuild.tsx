@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -128,9 +127,14 @@ const APKBuild = () => {
                   <li>
                     <p className="font-medium">Accept SDK Licenses</p>
                     <div className="bg-gray-100 p-3 rounded-md font-mono text-sm">
-                      # Run in terminal<br/>
-                      yes | $ANDROID_SDK_ROOT/tools/bin/sdkmanager --licenses
+                      # For newer Android SDK versions (where tools/bin directory doesn't exist)<br/>
+                      yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses<br/><br/>
+                      
+                      # If the above doesn't work, try:<br/>
+                      yes | $ANDROID_SDK_ROOT/cmdline-tools/[version]/bin/sdkmanager --licenses
                     </div>
+                    <p>Replace [version] with the specific version folder you have (e.g., "8.0", "9.0").</p>
+                    <p>In Android Studio, you can also accept licenses via: Tools → SDK Manager → SDK Tools tab → Show Package Details → Accept License</p>
                   </li>
                   <li>
                     <p className="font-medium">Using Android Studio Instead</p>
