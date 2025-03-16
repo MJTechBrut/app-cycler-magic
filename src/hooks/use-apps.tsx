@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { toast } from '@/hooks/use-toast';
 import { AppInfo } from '@/types/apps';
 
-// Mock data for web preview
+// Mock data for web preview - offline ready
 const MOCK_APPS: AppInfo[] = [
   { name: 'Google Maps', packageName: 'com.google.android.apps.maps', launchable: true },
   { name: 'Spotify', packageName: 'com.spotify.music', launchable: true },
@@ -34,8 +34,8 @@ export function useApps() {
   useEffect(() => {
     const fetchApps = async () => {
       try {
-        // Simulate loading delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Simulate loading delay - but much shorter for offline use
+        await new Promise(resolve => setTimeout(resolve, 300));
         
         // In the real app, this would use Android's PackageManager
         // to get the list of installed apps
