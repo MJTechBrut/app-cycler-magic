@@ -2,8 +2,9 @@
 import { useEffect, useState } from 'react';
 import { toast } from '@/hooks/use-toast';
 import { AppInfo } from '@/types/apps';
+import { Capacitor } from '@capacitor/core';
 
-// Mock data for web preview - offline ready
+// Mock data as fallback for web preview
 const MOCK_APPS: AppInfo[] = [
   { name: 'Google Maps', packageName: 'com.google.android.apps.maps', launchable: true },
   { name: 'Spotify', packageName: 'com.spotify.music', launchable: true },
@@ -30,20 +31,51 @@ export function useApps() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   
-  // In a real app, this would use Android PackageManager APIs
   useEffect(() => {
     const fetchApps = async () => {
       try {
-        // Simulate loading delay - but much shorter for offline use
-        await new Promise(resolve => setTimeout(resolve, 300));
+        setIsLoading(true);
+
+        // Check if running on Android
+        if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
+          try {
+            // Call native plugin via custom method
+            // This requires creating a native Android plugin that can access the PackageManager
+            // For now, we'll simulate this with a simple interface to show the concept
+            console.log('Fetching installed apps from Android');
+            const result = await (window as any).Capacitor.Plugins.AppLauncher?.getInstalledApps();
+
+            if (result && result.apps) {
+              // Convert native app format to our AppInfo format
+              const nativeApps: AppInfo[] = result.apps.map((app: any) => ({
+                name: app.appName,
+                packageName: app.packageName,
+                icon: app.iconBase64 || undefined,
+                launchable: app.launchable
+              }));
+              
+              setInstalledApps(nativeApps);
+              console.log(`Found ${nativeApps.length} installed apps`);
+            } else {
+              // Fallback to mock data if plugin failed
+              console.log('Native plugin failed, using mock data');
+              setInstalledApps(MOCK_APPS);
+            }
+          } catch (nativeError) {
+            console.error('Error accessing native API:', nativeError);
+            // Fallback to mock data
+            setInstalledApps(MOCK_APPS);
+          }
+        } else {
+          // Web environment - use mock data
+          console.log('Using mock app data for web environment');
+          await new Promise(resolve => setTimeout(resolve, 300)); // Simulate loading
+          setInstalledApps(MOCK_APPS);
+        }
         
-        // In the real app, this would use Android's PackageManager
-        // to get the list of installed apps
-        
-        // For now, use mock data
-        setInstalledApps(MOCK_APPS);
         setIsLoading(false);
       } catch (err) {
+        console.error('Error in useApps:', err);
         setError(err instanceof Error ? err : new Error('Unknown error occurred'));
         setIsLoading(false);
         toast({
@@ -61,14 +93,35 @@ export function useApps() {
 }
 
 export function useAppLauncher() {
-  // In a real app, this would use Android Intent APIs
+  // Launch app using Android Intent
   const launchApp = async (packageName: string): Promise<boolean> => {
-    console.log(`[MOCK] Launching app: ${packageName}`);
-    toast({
-      title: "App Launch Simulated",
-      description: `Would launch: ${packageName}`,
-    });
-    return true;
+    try {
+      if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
+        // Try to use native plugin
+        const result = await (window as any).Capacitor.Plugins.AppLauncher?.launchApp({
+          packageName: packageName
+        });
+        
+        console.log(`Launched app: ${packageName}`);
+        return result?.success || false;
+      } else {
+        // Web simulation
+        console.log(`[MOCK] Launching app: ${packageName}`);
+        toast({
+          title: "App Launch Simulated",
+          description: `Would launch: ${packageName}`,
+        });
+        return true;
+      }
+    } catch (error) {
+      console.error('Error launching app:', error);
+      toast({
+        title: "Error Launching App",
+        description: `Could not launch ${packageName}`,
+        variant: "destructive",
+      });
+      return false;
+    }
   };
   
   return { launchApp };
