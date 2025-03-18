@@ -23,12 +23,15 @@ export function useAppCycler() {
     const loadConfig = async () => {
       try {
         if (Capacitor.isNativePlatform()) {
-          // On native platform, try to load from SharedPreferences
+          // On native platform, try to load from SharedPreferences via native plugin
           try {
+            // This requires native Android plugin implementation to access SharedPreferences
             const result = await (window as any).Capacitor.Plugins.AppCycler?.getConfig();
             if (result && result.config) {
               setConfig(JSON.parse(result.config));
               return;
+            } else {
+              console.log('Native AppCycler plugin not implemented or failed - falling back to localStorage');
             }
           } catch (e) {
             console.error('Error loading config from native:', e);
@@ -60,6 +63,7 @@ export function useAppCycler() {
         // On native platform, also save to SharedPreferences
         if (Capacitor.isNativePlatform()) {
           try {
+            // This requires native Android plugin implementation
             await (window as any).Capacitor.Plugins.AppCycler?.saveConfig({
               config: JSON.stringify(config)
             });
@@ -80,7 +84,8 @@ export function useAppCycler() {
     const checkServiceStatus = async () => {
       if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
         try {
-          // Check actual accessibility service status on Android
+          // This requires native Android plugin implementation
+          // It should check if the AppCycler accessibility service is enabled
           const result = await (window as any).Capacitor.Plugins.AppCycler?.checkServiceStatus();
           if (result) {
             setIsServiceActive(result.active);
@@ -89,6 +94,10 @@ export function useAppCycler() {
             if (config.serviceEnabled !== result.active) {
               setConfig(prev => ({ ...prev, serviceEnabled: result.active }));
             }
+          } else {
+            console.log('Native AppCycler plugin not implemented or failed');
+            // Fall back to config value
+            setIsServiceActive(config.serviceEnabled);
           }
         } catch (e) {
           console.error('Error checking service status:', e);
@@ -133,6 +142,8 @@ export function useAppCycler() {
     // On Android, update the boot receiver
     if (Capacitor.isNativePlatform()) {
       try {
+        // This requires native Android plugin implementation
+        // It should register/unregister a BroadcastReceiver for BOOT_COMPLETED
         (window as any).Capacitor.Plugins.AppCycler?.setAutoStart({
           enabled: newAutoStart
         });
@@ -165,6 +176,8 @@ export function useAppCycler() {
     // Actually launch the app
     if (Capacitor.isNativePlatform()) {
       try {
+        // This requires native Android plugin implementation
+        // It should create an Intent to launch the app
         await (window as any).Capacitor.Plugins.AppLauncher?.launchApp({
           packageName: nextApp.packageName
         });
@@ -178,7 +191,7 @@ export function useAppCycler() {
       }
     } else {
       // Web simulation
-      console.log(`[MOCK] Cycling to app: ${nextApp.name} (${nextApp.packageName})`);
+      console.log(`[WEB] Cycling to app: ${nextApp.name} (${nextApp.packageName})`);
     }
   };
   
@@ -186,6 +199,8 @@ export function useAppCycler() {
   const checkAccessibilityPermission = async (): Promise<boolean> => {
     if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
       try {
+        // This requires native Android plugin implementation
+        // It should check if the accessibility service permission is granted
         const result = await (window as any).Capacitor.Plugins.AppCycler?.checkAccessibilityPermission();
         return result?.granted || false;
       } catch (e) {
@@ -202,12 +217,14 @@ export function useAppCycler() {
   const requestAccessibilityPermission = async () => {
     if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
       try {
+        // This requires native Android plugin implementation
+        // It should open Android accessibility settings for the app
         await (window as any).Capacitor.Plugins.AppCycler?.requestAccessibilityPermission();
       } catch (e) {
         console.error('Error requesting accessibility permission:', e);
         toast({
-          title: "Error",
-          description: "Could not open accessibility settings",
+          title: "Native Plugin Required",
+          description: "Custom Android plugin needed to open accessibility settings",
           variant: "destructive",
         });
       }

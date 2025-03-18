@@ -8,6 +8,7 @@ import Header from '@/components/Header';
 import { useAppCycler } from '@/hooks/use-app-cycler';
 import { Activity, AlertTriangle, Power, RotateCw } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Capacitor } from '@capacitor/core';
 
 const Settings = () => {
   const { toast } = useToast();
@@ -15,7 +16,8 @@ const Settings = () => {
     config, 
     toggleServiceEnabled,
     toggleAutoStart,
-    requestAccessibilityPermission
+    requestAccessibilityPermission,
+    isServiceActive
   } = useAppCycler();
   
   const handleClearData = () => {
@@ -28,6 +30,8 @@ const Settings = () => {
       window.location.reload();
     }
   };
+  
+  const isNative = Capacitor.isNativePlatform();
   
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -48,7 +52,7 @@ const Settings = () => {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between p-3 rounded-md bg-secondary/50">
                     <div className="flex items-center gap-3">
-                      <Power className={`w-5 h-5 ${config.serviceEnabled ? 'text-primary' : 'text-muted-foreground'}`} />
+                      <Power className={`w-5 h-5 ${isServiceActive ? 'text-primary' : 'text-muted-foreground'}`} />
                       <span className="font-medium">Accessibility Service</span>
                     </div>
                     <Switch 
@@ -75,9 +79,16 @@ const Settings = () => {
                   </div>
                 </div>
                 
-                <p className="text-sm text-muted-foreground mt-3">
-                  The accessibility service allows App Cycler to detect when the Mode button is pressed.
-                </p>
+                <div className="text-sm text-muted-foreground mt-3">
+                  <p>
+                    The accessibility service allows App Cycler to detect when the Mode button is pressed.
+                  </p>
+                  {!isNative && (
+                    <p className="mt-2 text-amber-500">
+                      Note: Full accessibility functionality requires running on an Android device with the custom AppCycler native plugin.
+                    </p>
+                  )}
+                </div>
               </div>
               
               <div className="glass-card p-4 rounded-lg">
@@ -117,8 +128,24 @@ const Settings = () => {
                 </p>
               </div>
               
+              {!isNative && (
+                <div className="bg-amber-950/50 p-4 rounded-lg border border-amber-500/30">
+                  <h2 className="text-amber-500 text-lg font-medium mb-2">Native Plugin Required</h2>
+                  <p className="text-amber-300 text-sm">
+                    To make this app fully functional on an Android device, a custom native Capacitor plugin needs to be implemented.
+                    This plugin would handle:
+                  </p>
+                  <ul className="list-disc list-inside text-amber-300 text-sm mt-2 space-y-1">
+                    <li>Accessing installed apps via PackageManager</li>
+                    <li>Launching apps via Intent</li>
+                    <li>Managing Accessibility Service for button detection</li>
+                    <li>Configuring boot startup via BroadcastReceiver</li>
+                  </ul>
+                </div>
+              )}
+              
               <div className="text-center text-xs text-muted-foreground mt-6">
-                <p>App Cycler v1.0.0</p>
+                <p>App Cycler v1.0.0 {isNative ? '(Native)' : '(Web Demo)'}</p>
               </div>
             </motion.div>
           </div>

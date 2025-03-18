@@ -39,10 +39,11 @@ export function useApps() {
         // Check if running on Android
         if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
           try {
-            // Call native plugin via custom method
-            // This requires creating a native Android plugin that can access the PackageManager
-            // For now, we'll simulate this with a simple interface to show the concept
-            console.log('Fetching installed apps from Android');
+            // This requires the native Android plugin implementation
+            console.log('Attempting to fetch real installed apps from Android');
+            
+            // The AppLauncher plugin must be implemented in native Android code
+            // It should use PackageManager to get the list of installed apps
             const result = await (window as any).Capacitor.Plugins.AppLauncher?.getInstalledApps();
 
             if (result && result.apps) {
@@ -55,15 +56,24 @@ export function useApps() {
               }));
               
               setInstalledApps(nativeApps);
-              console.log(`Found ${nativeApps.length} installed apps`);
+              console.log(`Found ${nativeApps.length} real installed apps`);
             } else {
-              // Fallback to mock data if plugin failed
-              console.log('Native plugin failed, using mock data');
+              // Native plugin not available or failed
+              console.log('Native AppLauncher plugin not implemented - see console for details');
+              toast({
+                title: "Native Plugin Required",
+                description: "This app requires a custom Android plugin to access installed apps",
+                variant: "destructive",
+              });
               setInstalledApps(MOCK_APPS);
             }
           } catch (nativeError) {
-            console.error('Error accessing native API:', nativeError);
-            // Fallback to mock data
+            console.error('Error accessing native Android API:', nativeError);
+            toast({
+              title: "Native Plugin Error",
+              description: "Error accessing Android package manager API",
+              variant: "destructive",
+            });
             setInstalledApps(MOCK_APPS);
           }
         } else {
@@ -97,16 +107,25 @@ export function useAppLauncher() {
   const launchApp = async (packageName: string): Promise<boolean> => {
     try {
       if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
-        // Try to use native plugin
+        // This requires the native Android plugin implementation
+        // It should create an Intent to launch the app with the given packageName
         const result = await (window as any).Capacitor.Plugins.AppLauncher?.launchApp({
           packageName: packageName
         });
         
-        console.log(`Launched app: ${packageName}`);
+        if (!result?.success) {
+          toast({
+            title: "Native Plugin Required",
+            description: "Full app launching requires a custom Android plugin",
+            variant: "destructive",
+          });
+        }
+        
+        console.log(`Attempted to launch app: ${packageName}`);
         return result?.success || false;
       } else {
         // Web simulation
-        console.log(`[MOCK] Launching app: ${packageName}`);
+        console.log(`[WEB] Launching app simulation: ${packageName}`);
         toast({
           title: "App Launch Simulated",
           description: `Would launch: ${packageName}`,
