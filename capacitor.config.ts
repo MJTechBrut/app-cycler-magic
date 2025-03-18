@@ -2,7 +2,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'app.lovable.7365d7de31b046feb07f1d4b90f13ce5',
+  appId: 'com.lovable.appcyclermagic',
   appName: 'app-cycler-magic',
   webDir: 'dist',
   android: {
