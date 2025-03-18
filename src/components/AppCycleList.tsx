@@ -84,8 +84,8 @@ const AppCycleList: React.FC<AppCycleListProps> = ({
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 h-full pb-4">
+      <div className="flex items-center justify-between sticky top-0 bg-background z-10 pb-2">
         <h3 className="text-lg font-medium">App Cycle Order</h3>
         <div className="flex gap-2">
           <Button 
@@ -108,7 +108,7 @@ const AppCycleList: React.FC<AppCycleListProps> = ({
       
       {apps.length === 0 ? (
         <motion.div 
-          className="text-center p-6 border border-dashed rounded-lg"
+          className="text-center p-6 border border-dashed rounded-lg h-[calc(100%-60px)] flex flex-col items-center justify-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
@@ -134,7 +134,7 @@ const AppCycleList: React.FC<AppCycleListProps> = ({
             items={apps.map(app => app.packageName)}
             strategy={verticalListSortingStrategy}
           >
-            <div className="space-y-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {apps.map((app, index) => (
                 <SortableAppCard
                   key={app.packageName}
@@ -148,7 +148,7 @@ const AppCycleList: React.FC<AppCycleListProps> = ({
         </DndContext>
       ) : (
         <AnimatePresence>
-          <div className="space-y-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             {apps.map((app, index) => (
               <AppCard
                 key={app.packageName}

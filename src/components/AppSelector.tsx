@@ -40,7 +40,7 @@ const AppSelector: React.FC<AppSelectorProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md max-h-[80vh] overflow-hidden flex flex-col">
+      <DialogContent className="landscape-dialog sm:max-w-3xl max-h-[400px] overflow-hidden flex flex-col">
         <DialogHeader className="mb-2">
           <DialogTitle>Select App</DialogTitle>
         </DialogHeader>
@@ -80,7 +80,7 @@ const AppSelector: React.FC<AppSelectorProps> = ({
             </div>
           ) : (
             <AnimatePresence>
-              <div className="space-y-2 pb-2">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 pb-2">
                 {filteredApps.map(app => (
                   <motion.div
                     key={app.packageName}
